@@ -10,7 +10,7 @@ def analyze_menu_image_gemini(image_bytes: bytes, target_language: str, client: 
     For every dish found:
     1. Extract the exact dish name from the image.
     2. Identify ingredients or cooking methods mentioned in the image for that dish.
-    3. Translate the name and write a 1-sentence appetizing description in {target_language}.
+    3. Translate the dish name and write a 1-sentence appetizing description in {target_language}.
        - Use the identified ingredients to make the description specific and enticing.
        - If no ingredients are listed, describe the dish's typical flavor profile.
     4. A list of exactly 2 tags in {target_language}. 
@@ -22,7 +22,7 @@ def analyze_menu_image_gemini(image_bytes: bytes, target_language: str, client: 
     Rules:
     - Use ONE line per item.
     - source_name: The exact dish name as written on the menu.
-    - translation: "Translated Name:Appetizing description".
+    - translation: Use the format "[Translated Dish Name]: [Appetizing description]"
     - tags: use "," characters to separate tags.
     - Use exactly one "##" character as a separator, and DO NOT use the "##" characters anywhere else.
     - Do not include categories (like 'Appetizers'), prices, or contact info.
@@ -45,7 +45,6 @@ def analyze_menu_image_gemini(image_bytes: bytes, target_language: str, client: 
         raw_text = response.text
         if not raw_text:
             return []
-
         lines = raw_text.strip().split('\n')
         for line in lines:
             if "##" in line:
