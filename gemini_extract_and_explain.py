@@ -2,9 +2,15 @@ from typing import List
 from google import genai
 from google.genai import types
 
-def analyze_menu_image_gemini(image_bytes: bytes, target_language: str, client: genai.Client) -> List[dict]:
+def analyze_menu_image_gemini(image_bytes: bytes, target_language: str, client: genai.Client, restaurant: str) -> List[dict]:
+    restaurant_name = (
+        f"at the restaurant '{restaurant}'"
+        if restaurant
+        else "in general or at popular locations"
+    )
+
     prompt_text = f"""
-    Analyze this menu image strictly. 
+    Analyze this menu image "{restaurant_name}" strictly.
     Target Language: {target_language}.
 
     For every dish found:

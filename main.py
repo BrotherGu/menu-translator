@@ -31,7 +31,8 @@ async def details(dish_context: List[str] = Form(...),
 
 @app.post("/upload")
 async def upload(file: UploadFile = File(...),
-                 target_language: str = Form(...)):
+                 target_language: str = Form(...),
+                 restaurant_name: Optional[str] = Form(None)):
     # 1. input validation
     if file.content_type not in ALLOWED_TYPES:
         raise HTTPException(
@@ -56,5 +57,5 @@ async def upload(file: UploadFile = File(...),
         )
 
     # 3. extract dish name and description by LLM
-    result = analyze_menu_image_gemini(image_bytes, target_language, gemini_client)
+    result = analyze_menu_image_gemini(image_bytes, target_language, gemini_client, restaurant_name)
     return result

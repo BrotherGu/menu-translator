@@ -52,7 +52,7 @@ async def process_batch(
            - Feedback (Portion/Flavor)
            - Pro-tips (Hacks/Pairings)
            - Numerical ratings (Spiciness, Sweetness, Acidity, Richness on a 0-5 scale)
-           - Texture keywords
+           - Texture & Mouthfeel (Use 2-3 specific culinary descriptors, e.g., silken, charred, brittle, or umami-rich snap, to define the eating experience)
 
         STRUCTURE PER DISH:
         === DISH_START ===
