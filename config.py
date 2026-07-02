@@ -3,8 +3,9 @@ from dotenv import load_dotenv
 
 # constants
 MAX_FILE_SIZE = 5 * 1024 * 1024  # 5MB
-# 👉 60–70% HEIC --> convert to JPEG in frontend
-ALLOWED_TYPES = {"image/jpeg", "image/png", "image/webp"}
+# iPhone photos are often mislabeled image/jpeg while actually HEIC;
+# real format is verified/converted server-side in main.py via pillow-heif.
+ALLOWED_TYPES = {"image/jpeg", "image/png", "image/webp", "image/heic", "image/heif"}
 
 # Gemini API key
 if os.getenv("RENDER") != "true":
