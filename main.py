@@ -1,6 +1,7 @@
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from google import genai
 from PIL import Image
+from pillow_heif import register_heif_opener
 import io
 from config import ALLOWED_TYPES, MAX_FILE_SIZE, GEMINI_API_KEY
 from gemini_extract_and_explain import analyze_menu_image_gemini
@@ -10,6 +11,7 @@ from typing import Optional, List
 # clients
 app = FastAPI()
 gemini_client = genai.Client(api_key=GEMINI_API_KEY)
+register_heif_opener()  # lets Image.open() decode HEIC/HEIF (common for iPhone photos mislabeled as image/jpeg)
 
 # start backend: uvicorn main:app --reload
 @app.get("/")
@@ -49,12 +51,19 @@ async def upload(file: UploadFile = File(...),
         )
     try:
         image = Image.open(io.BytesIO(image_bytes))
-        image.verify()
-    except Exception:
+        image.load()
+    except Exception as e:
+        print(f"Image validation failed: {e}")
         raise HTTPException(
             status_code=400,
             detail="Invalid image file"
         )
+
+    # HEIC/HEIF (common on iPhone) isn't accepted by the Gemini call below, so re-encode to JPEG
+    if image.format in ("HEIF", "HEIC"):
+        buf = io.BytesIO()
+        image.convert("RGB").save(buf, format="JPEG")
+        image_bytes = buf.getvalue()
 
     # 3. extract dish name and description by LLM
     result = analyze_menu_image_gemini(image_bytes, target_language, gemini_client, restaurant_name)
